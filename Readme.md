@@ -1,5 +1,7 @@
 # What does this script do?
 
+This is an automatic theme switcher for Ubuntu 22.04.
+
 It sets the light-theme at sunrise and automatically switches to the dark-theme at sunset.
 It also sets the prefer-light/prefer-dark value to indicate to programs and websites which version you prefer.
 
