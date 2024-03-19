@@ -17,6 +17,13 @@ DARK_GTK_THEME="Yaru-dark"
 LIGHT_ICON_THEME="Yaru"
 DARK_ICON_THEME="Yaru-dark"
 
+#
+#
+# Do not edit below this line.
+# (Unless you know what you are doing.)
+#
+#
+
 echo -n "Checking dependencies... "
 for name in hdate
 do
@@ -82,8 +89,8 @@ fi
 # set next execution-time of this script
 echo "Next execution of the auto-darkmode-switcher-script: $NEXT_EXECUTION_AT"
 
-THIS_SCRIPT=$(readlink -f $0)
+# remove an already existing timer, if one exists
+systemctl --user stop auto-darkmode-switcher.timer 2> /dev/null
 
 # specifying a fixed "unit" avoids adding the timer again, if it exists already.
-# specifying a service-type of "oneshot" fixes, that the next timer cannot be added while this script is active.
-systemd-run --user --no-ask-password --on-calendar "$NEXT_EXECUTION_AT" --unit="auto-darkmode-switcher" --service-type="oneshot" --collect
+systemd-run --user --no-ask-password --on-calendar "$NEXT_EXECUTION_AT" --unit="auto-darkmode-switcher" --collect
