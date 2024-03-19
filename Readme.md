@@ -7,8 +7,8 @@ It also sets the prefer-light/prefer-dark value to indicate to programs and webs
 
 # Installation
 
-1. Open the script and add your Latitude, Longitude and preferred themes.
-2. Execute the install script once: `sh /install.sh`.
+1. Open the `auto-darkmode-switcher.sh` script with a text-editor and add your latitude, longitude and preferred themes.
+2. Execute the install script once: `sh ./install.sh`.
 3. If it complains about dependencies, install them and execute it again.
 
 # Troubleshooting
