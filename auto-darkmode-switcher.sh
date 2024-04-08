@@ -57,7 +57,7 @@ if [ $COMPARABLE_NOW -gt $COMPARABLE_SUNRISE_TODAY ] && [ $COMPARABLE_NOW -lt $C
     echo "Day theme has been set"
 
     # execute this script at sunset again
-    NEXT_EXECUTION_AT=$(date --date="$SUNSET_TODAY +1 minute" +"%Y-%m-%d %H:%M")
+    NEXT_EXECUTION_AT=$(date --date="$SUNSET_TODAY 1 minute" +"%Y-%m-%d %H:%M")
 else
     echo "Setting night theme..."
 
@@ -79,10 +79,10 @@ else
 
 	echo "Sunrise tomorrow: $SUNRISE_TOMORROW"
         
-	NEXT_EXECUTION_AT=$(date --date="$SUNRISE_TOMORROW +1 day +1 minute" +"%Y-%m-%d %H:%M")
+	NEXT_EXECUTION_AT=$(date --date="$SUNRISE_TOMORROW 1 day 1 minute" +"%Y-%m-%d %H:%M")
     else
         # execute this script today at sunrise again
-	NEXT_EXECUTION_AT=$(date --date="$SUNRISE_TODAY +1 minute" +"%Y-%m-%d %H:%M")
+	NEXT_EXECUTION_AT=$(date --date="$SUNRISE_TODAY 1 minute" +"%Y-%m-%d %H:%M")
     fi
 fi
 
