@@ -13,7 +13,7 @@ It also sets the prefer-light/prefer-dark value to indicate to programs and webs
 
 # Troubleshooting
 
-Execute `systemctl --user list-timers`. If all went well, there should be a "auto-darkmode-switcher.time"-unit in the list. Exit by pressing "q".
+Execute `systemctl --user list-timers`. If all went well, there should be a "auto-darkmode-switcher.time"-unit in the list. Exit by pressing <kbd>Q</kbd>.
 
 # How to stop the script
 
