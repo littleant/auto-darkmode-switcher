@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # your location (get it from Google Maps-URL, for example):
-LATITUDE="48.2092384"
-LONGITUDE="16.3619745"
+LATITUDE="23.1930661"
+LONGITUDE="72.6364306"
 
 # To see what theme/icon is currently enabled, execute this command:
 # gsettings get org.gnome.desktop.interface gtk-theme
@@ -14,8 +14,15 @@ LONGITUDE="16.3619745"
 LIGHT_GTK_THEME="Yaru"
 DARK_GTK_THEME="Yaru-dark"
 
+LIGHT_SHELL_THEME="Yaru"
+DARK_SHELL_THEME="Yaru-dark"
+
 LIGHT_ICON_THEME="Yaru"
 DARK_ICON_THEME="Yaru-dark"
+
+# To get desired brightness value refer '/sys/class/backlight/intel_backlight/brightness' file
+LIGHT_MODE_BRIGHTNESS=96240
+DARK_MODE_BRIGHTNESS=24960
 
 #
 #
@@ -24,12 +31,20 @@ DARK_ICON_THEME="Yaru-dark"
 #
 #
 
+export DISPLAY=:0 
+
 echo -n "Checking dependencies... "
 for name in hdate
 do
   [[ $(which $name 2>/dev/null) ]] || { echo -en "\n$name needs to be installed. Use 'sudo apt-get install $name'";deps=1; }
 done
 [[ $deps -ne 1 ]] && echo "OK" || { echo -en "\nInstall the above and rerun this script\n";exit 1; }
+
+sudo apt install gnome-shell-extensions -y
+gnome-extensions enable user-theme@gnome-shell-extensions.gcampax.github.com
+# Or if above fails, list extensions:
+# gnome-extensions list
+# gnome-extensions enable user-theme@...    # Use the exact name listed
 
 TIMEZONE_OFFSET=$(date +'%z' | sed -r 's/(.{3})/\1:/' | sed -r 's/([+-])(0)?(.*)/\1\3/')
 HDATE_TODAY=$(hdate -s --not-sunset-aware -l "$LATITUDE" -L "$LONGITUDE" -z$TIMEZONE_OFFSET)
@@ -53,6 +68,15 @@ if [ $COMPARABLE_NOW -gt $COMPARABLE_SUNRISE_TODAY ] && [ $COMPARABLE_NOW -lt $C
     gsettings set org.gnome.desktop.interface color-scheme prefer-light
     gsettings set org.gnome.desktop.interface gtk-theme "$LIGHT_GTK_THEME"
     gsettings set org.gnome.desktop.interface icon-theme "$LIGHT_ICON_THEME"
+    gsettings set org.gnome.shell.extensions.user-theme name "$LIGHT_SHELL_THEME"
+
+    sudo sh -c "echo $LIGHT_MODE_BRIGHTNESS > /sys/class/backlight/intel_backlight/brightness"
+    # These changes cursor theme
+    # gsettings set org.cinnamon.desktop.interface cursor-theme "Bibata-Modern-Ice"
+
+    # use following command to get dconf file for GNOME terminal
+    # dconf dump /org/gnome/terminal/legacy/profiles:/ > $HOME/light-terminal-profile.dconf
+    dconf load /org/gnome/terminal/legacy/profiles:/ < $HOME/light-terminal-profile.dconf
 
     echo "Day theme has been set"
 
@@ -64,6 +88,15 @@ else
     gsettings set org.gnome.desktop.interface color-scheme prefer-dark
     gsettings set org.gnome.desktop.interface gtk-theme "$DARK_GTK_THEME"
     gsettings set org.gnome.desktop.interface icon-theme "$DARK_ICON_THEME"
+    gsettings set org.gnome.shell.extensions.user-theme name "$DARK_SHELL_THEME"
+
+    sudo sh -c "echo $DARK_MODE_BRIGHTNESS > /sys/class/backlight/intel_backlight/brightness"
+    # These changes cursor theme
+    # gsettings set org.cinnamon.desktop.interface cursor-theme "Bibata-Modern-Classic"
+    
+    # use following command to get dconf file for GNOME terminal
+    # dconf dump /org/gnome/terminal/legacy/profiles:/ > $HOME/dark-terminal-profile.dconf
+    dconf load /org/gnome/terminal/legacy/profiles:/ < $HOME/dark-terminal-profile.dconf
 
     echo "Night theme has been set"
 
@@ -75,7 +108,7 @@ else
 	TOMORROW_DAY=$(date -d "$TOMORROW" +'%d')
 
 	HDATE_TOMORROW=$(hdate -s --not-sunset-aware -l "$LATITUDE" -L "$LONGITUDE" -z$TIMEZONE_OFFSET $TOMORROW_DAY $TOMORROW_MONTH $TOMORROW_YEAR)
-        SUNRISE_TOMORROW=$(echo "$HDATE_TOMORROW" | grep "sunrise: " | grep -o '[0-2][0-9]:[0-6][0-9]')
+    SUNRISE_TOMORROW=$(echo "$HDATE_TOMORROW" | grep "sunrise: " | grep -o '[0-2][0-9]:[0-6][0-9]')
 
 	echo "Sunrise tomorrow: $SUNRISE_TOMORROW"
         
@@ -85,6 +118,8 @@ else
 	NEXT_EXECUTION_AT=$(date --date="$SUNRISE_TODAY 1 minute" +"%Y-%m-%d %H:%M")
     fi
 fi
+
+unset DISPLAY
 
 # set next execution-time of this script
 echo "Next execution of the auto-darkmode-switcher-script: $NEXT_EXECUTION_AT"
