@@ -1,8 +1,13 @@
 #!/bin/bash
 
-echo "Making auto-darkmode-switcher-script executable..."
+echo -n "Making auto-darkmode-switcher-script executable... "
 THEME_SWITCHER_SCRIPT=$(realpath $(dirname $0))/auto-darkmode-switcher.sh
-chmod +x "$THEME_SWITCHER_SCRIPT"
+if ! chmod +x "$THEME_SWITCHER_SCRIPT"; then
+	echo "FAILED"
+	echo "Execute this script with sudo maybe?"
+	exit 1
+fi
+echo "OK"
 
 echo "Creating startup-service..."
 # create startup service
@@ -18,6 +23,11 @@ echo "Starting auto-darkmode-switcher..."
 
 # execute script once to kick it off
 /bin/bash "$THEME_SWITCHER_SCRIPT"
+
+if [ $? != "0" ]; then
+	echo "Installation failed!"
+	exit $?
+fi
 
 echo "Installation done."
 echo "Your themes will now be changed automatically to light and darkmode at boot and at sunrise and sunset."
