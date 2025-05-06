@@ -53,12 +53,12 @@ done
 if ! which gnome-extensions >/dev/null 2>&1; then
 	# The gnome-shell-extensions package contains the gnome-extensions command.
 	name=gnome-shell-extensions
-	echo -en "\nThe gnome-extensions command needs to be installed. Use 'sudo apt install $name' to install it.\nIf you still see this message after installing it, try pressing [Alt]+[F2] and type 'r' into the prompt to reload the gnome-shell."
+	echo -en "\nThe gnome-extensions command needs to be installed. Use 'sudo apt install $name' to install it.\nIf you still see this message after installing it, try logging out and back in (or reboot) to restart the gnome-shell."
 	missing_deps=$((missing_deps+1))
-elif ! gnome-extensions list | grep -q 'user-theme@gnome-shell-extensions.gcampax.github.com'; then
+elif ! gnome-extensions list | grep -q -- 'user-theme@gnome-shell-extensions\.gcampax\.github.com'; then
 	# The gnome-shell-extensions package contains the user-theme shell-extension.
 	name=gnome-shell-extensions
-	echo -en "\nThe user-theme shell-extension needs to be installed. Use 'sudo apt install $name' to install it.\nIf you still see this message after installing it, try pressing [Alt]+[F2] and type 'r' into the prompt to reload the gnome-shell."
+	echo -en "\nThe user-theme shell-extension needs to be installed. Use 'sudo apt install $name' to install it.\nIf you still see this message after installing it, try logging out and back in (or reboot) to restart the gnome-shell."
 	missing_deps=$((missing_deps+1))
 fi
 
@@ -70,11 +70,12 @@ else
 fi
 
 echo -n "Enabling gnome-shell-extension 'user-theme'... "
-gnome-extensions enable user-theme@gnome-shell-extensions.gcampax.github.com 2>/dev/null
-if ! gnome-extensions info user-theme@gnome-shell-extensions.gcampax.github.com 2>/dev/null | grep -q 'Status: ACTIVE'; then
+gnome-extensions enable 'user-theme@gnome-shell-extensions.gcampax.github.com' 2>/dev/null
+# The following grep pattern MUST be " ACTIVE" (notice the space), because without the space it would match "INACTIVE", too.
+if ! gnome-extensions info 'user-theme@gnome-shell-extensions.gcampax.github.com' 2>/dev/null | grep -q -- ' ACTIVE'; then
 	echo "FAILED"
 	echo "Please try the following:"
-	echo "1. Press [Alt]+[F2] and type 'r' into the prompt to reload the gnome-shell."
+	echo "1. Log out and back in (or reboot) to restart the gnome-shell."
 	echo "2. Execute 'gnome-extensions-app' and enable the top slider labeled 'Extensions'."
 	echo "3. Execute this script again."
 	exit 1 
