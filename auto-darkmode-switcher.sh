@@ -197,7 +197,7 @@ fi
 echo "Next execution of the auto-darkmode-switcher-script: $NEXT_EXECUTION_AT"
 
 # remove an already existing timer, if one exists
-systemctl --user stop auto-darkmode-switcher.timer 2> /dev/null
+systemctl --user stop auto-darkmode-switcher.timer 2>/dev/null
 
 # specifying a fixed "unit" avoids adding the timer again, if it exists already.
 systemd-run --user --no-ask-password --on-calendar "$NEXT_EXECUTION_AT" --unit="auto-darkmode-switcher" --collect
